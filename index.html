@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carbono Secundario - Estudio Completo</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
     <style>
         :root {
             --primario: #2563eb;
@@ -14,6 +16,15 @@
             --fondo: #f0f9ff;
             --texto: #1e3a8a;
             --texto-secundario: #64748b;
+            --sombra: 0 4px 6px rgba(0,0,0,0.05);
+            --borde-radius: 12px;
+            --transicion: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -23,6 +34,7 @@
             background: var(--fondo);
             color: var(--texto);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .contenedor-principal {
@@ -37,8 +49,8 @@
         .navegacion {
             background: white;
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: var(--borde-radius);
+            box-shadow: var(--sombra);
             position: sticky;
             top: 20px;
             height: fit-content;
@@ -49,6 +61,7 @@
             color: var(--primario);
             border-bottom: 2px solid var(--fondo);
             padding-bottom: 10px;
+            font-size: 1.2rem;
         }
 
         .navegacion button {
@@ -63,19 +76,21 @@
             color: white;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transicion);
             text-align: left;
-            font-size: 15px;
+            font-size: 0.95rem;
         }
 
-        .navegacion button:hover {
+        .navegacion button:hover, .navegacion button:focus {
             transform: translateX(5px);
             background: var(--secundario);
             box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            outline: none;
         }
 
         .navegacion button i {
-            font-size: 18px;
+            font-size: 1.1rem;
+            min-width: 20px;
         }
 
         /* Contenido interactivo */
@@ -83,9 +98,9 @@
             position: relative;
             min-height: 800px;
             background: white;
-            border-radius: 12px;
+            border-radius: var(--borde-radius);
             padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: var(--sombra);
         }
 
         .seccion {
@@ -93,13 +108,18 @@
             animation: aparecer 0.4s ease;
         }
 
-        .seccion.activa { display: block; }
+        .seccion.activa { 
+            display: block; 
+            animation: aparecer 0.4s ease;
+        }
 
         h2 {
             color: var(--primario);
             margin-top: 0;
             position: relative;
             padding-bottom: 10px;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
         }
 
         h2::after {
@@ -115,13 +135,34 @@
 
         h3 {
             color: var(--secundario);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            color: var(--primario);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
         }
 
         .molecula-3d {
-            width: 300px;
+            width: 100%;
             height: 300px;
             background: #e0f2fe;
-            border-radius: 12px;
+            border-radius: var(--borde-radius);
             margin: 20px auto;
             position: relative;
             overflow: hidden;
@@ -145,7 +186,7 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            transition: transform 0.3s;
+            transition: var(--transicion);
             border: 1px solid rgba(59, 130, 246, 0.1);
         }
 
@@ -161,8 +202,13 @@
 
         .tarjeta-propiedad p {
             margin: 0;
-            font-size: 18px;
+            font-size: 1.2rem;
             font-weight: bold;
+        }
+
+        .tarjeta-propiedad small {
+            color: var(--texto-secundario);
+            font-size: 0.85rem;
         }
 
         @keyframes aparecer {
@@ -174,7 +220,7 @@
         .color-code {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
             margin: 25px 0;
         }
         
@@ -186,12 +232,14 @@
             background: rgba(255,255,255,0.7);
             border-radius: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
         }
         
         .color-marker {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
+            flex-shrink: 0;
         }
 
         /* Tablas */
@@ -202,6 +250,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             border-radius: 10px;
             overflow: hidden;
+            font-size: 0.95rem;
         }
 
         th, td {
@@ -238,11 +287,18 @@
             padding: 20px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.05);
             border-top: 3px solid var(--secundario);
+            transition: var(--transicion);
+        }
+
+        .ejemplo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
 
         .ejemplo h4 {
             margin-top: 0;
             color: var(--secundario);
+            font-size: 1.1rem;
         }
 
         .ejemplo img {
@@ -262,10 +318,37 @@
             
             .navegacion {
                 position: static;
+                margin-bottom: 20px;
             }
             
             .estructura-quimica {
                 grid-template-columns: 1fr 1fr;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .contenido-dinamico {
+                padding: 20px;
+            }
+
+            .estructura-quimica {
+                grid-template-columns: 1fr;
+            }
+
+            .ejemplos-container {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -297,37 +380,139 @@
             flex: 1;
             min-width: 300px;
         }
+
+        /* Estilos para el modelo 3D */
+        #modelo3d canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+            border-radius: var(--borde-radius);
+        }
+
+        /* Mejoras de accesibilidad */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Botón de ir arriba */
+        .ir-arriba {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primario);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: var(--transicion);
+            border: none;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 100;
+        }
+
+        .ir-arriba.mostrar {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .ir-arriba:hover {
+            background: var(--secundario);
+            transform: translateY(-3px);
+        }
+
+        /* Mejoras para formularios/interactivos */
+        [tabindex]:focus-visible {
+            outline: 2px solid var(--primario);
+            outline-offset: 2px;
+        }
+
+        /* Efectos de carga */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+            min-height: 20px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Mejoras para el gráfico */
+        .grafico-container {
+            width: 100%;
+            min-height: 300px;
+            position: relative;
+        }
+
+        /* Tooltips personalizados */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 10;
+            margin-bottom: 5px;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="contenedor-principal">
-        <nav class="navegacion">
+        <nav class="navegacion" aria-label="Menú de navegación">
             <h3>Estudio del Carbono Secundario</h3>
-            <button onclick="mostrarSeccion('definicion')">
-                <i class="fas fa-book"></i> Definición Básica
+            <button onclick="mostrarSeccion('definicion')" aria-label="Mostrar sección de Definición Básica">
+                <i class="fas fa-book" aria-hidden="true"></i> Definición Básica
             </button>
-            <button onclick="mostrarSeccion('estructura')">
-                <i class="fas fa-atom"></i> Estructura Molecular
+            <button onclick="mostrarSeccion('estructura')" aria-label="Mostrar sección de Estructura Molecular">
+                <i class="fas fa-atom" aria-hidden="true"></i> Estructura Molecular
             </button>
-            <button onclick="mostrarSeccion('propiedades')">
-                <i class="fas fa-flask"></i> Propiedades
+            <button onclick="mostrarSeccion('propiedades')" aria-label="Mostrar sección de Propiedades">
+                <i class="fas fa-flask" aria-hidden="true"></i> Propiedades
             </button>
-            <button onclick="mostrarSeccion('ejemplos')">
-                <i class="fas fa-vial"></i> Ejemplos Prácticos
+            <button onclick="mostrarSeccion('ejemplos')" aria-label="Mostrar sección de Ejemplos Prácticos">
+                <i class="fas fa-vial" aria-hidden="true"></i> Ejemplos Prácticos
             </button>
-            <button onclick="mostrarSeccion('comparativa')">
-                <i class="fas fa-balance-scale"></i> Comparativa
+            <button onclick="mostrarSeccion('comparativa')" aria-label="Mostrar sección de Comparativa">
+                <i class="fas fa-balance-scale" aria-hidden="true"></i> Comparativa
             </button>
-            <button onclick="mostrarSeccion('aplicaciones')">
-                <i class="fas fa-industry"></i> Aplicaciones
+            <button onclick="mostrarSeccion('aplicaciones')" aria-label="Mostrar sección de Aplicaciones">
+                <i class="fas fa-industry" aria-hidden="true"></i> Aplicaciones
             </button>
         </nav>
 
-        <div class="contenido-dinamico">
+        <main class="contenido-dinamico">
             <!-- Sección Definición -->
-            <div id="definicion" class="seccion activa">
-                <h2>Carbono Secundario</h2>
+            <section id="definicion" class="seccion activa" aria-labelledby="definicion-titulo">
+                <h2 id="definicion-titulo">Carbono Secundario</h2>
                 <div class="color-code">
                     <div class="color-item">
                         <div class="color-marker" style="background: var(--primario)"></div>
@@ -384,15 +569,15 @@
                     <li><strong>Efecto estérico:</strong> Moderado, permite cierta accesibilidad para reactivos</li>
                     <li><strong>Influencia en propiedades físicas:</strong> Afecta puntos de ebullición y solubilidad</li>
                 </ul>
-            </div>
+            </section>
 
             <!-- Sección Estructura Molecular -->
-            <div id="estructura" class="seccion">
-                <h2>Estructura Tridimensional</h2>
+            <section id="estructura" class="seccion" aria-labelledby="estructura-titulo">
+                <h2 id="estructura-titulo">Estructura Tridimensional</h2>
                 
                 <div class="modelo-container">
                     <div class="molecula-3d" id="modelo3d">
-                        <p>Modelo 3D interactivo del carbono secundario</p>
+                        <div class="skeleton" style="width: 100%; height: 100%;"></div>
                     </div>
                     <div class="modelo-info">
                         <h3>Geometría Molecular</h3>
@@ -405,26 +590,31 @@
                         
                         <h3>Parámetros Estructurales</h3>
                         <table>
-                            <tr>
-                                <th>Parámetro</th>
-                                <th>Valor</th>
-                            </tr>
-                            <tr>
-                                <td>Longitud de enlace C-C</td>
-                                <td>1.54 Å</td>
-                            </tr>
-                            <tr>
-                                <td>Longitud de enlace C-H</td>
-                                <td>1.09 Å</td>
-                            </tr>
-                            <tr>
-                                <td>Ángulo de enlace C-C-C</td>
-                                <td>~111° (en alcanos lineales)</td>
-                            </tr>
-                            <tr>
-                                <td>Ángulo diedro</td>
-                                <td>60° (en conformación eclipsada)</td>
-                            </tr>
+                            <caption>Parámetros estructurales del carbono secundario</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Parámetro</th>
+                                    <th scope="col">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Longitud de enlace C-C</td>
+                                    <td>1.54 Å</td>
+                                </tr>
+                                <tr>
+                                    <td>Longitud de enlace C-H</td>
+                                    <td>1.09 Å</td>
+                                </tr>
+                                <tr>
+                                    <td>Ángulo de enlace C-C-C</td>
+                                    <td>~111° (en alcanos lineales)</td>
+                                </tr>
+                                <tr>
+                                    <td>Ángulo diedro</td>
+                                    <td>60° (en conformación eclipsada)</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -433,17 +623,17 @@
                     <h3>Conformaciones Moleculares</h3>
                     <p>Los carbonos secundarios son cruciales en la formación de conformaciones moleculares. En moléculas como los alcanos, la rotación alrededor del enlace C-C permite diferentes conformaciones (alternada, eclipsada, gauche) que afectan la energía y estabilidad de la molécula. La barrera de rotación para el etano es de aproximadamente 12.5 kJ/mol, mientras que en moléculas más complejas con carbonos secundarios, este valor puede variar significativamente.</p>
                 </div>
-            </div>
+            </section>
 
             <!-- Sección Propiedades -->
-            <div id="propiedades" class="seccion">
-                <h2>Propiedades Físico-Químicas</h2>
+            <section id="propiedades" class="seccion" aria-labelledby="propiedades-titulo">
+                <h2 id="propiedades-titulo">Propiedades Físico-Químicas</h2>
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 30px; margin: 30px 0;">
-                    <div style="flex: 1; min-width: 300px;">
-                        <canvas id="graficoPropiedades" width="400" height="300"></canvas>
+                <div class="modelo-container">
+                    <div class="grafico-container">
+                        <canvas id="graficoPropiedades" width="400" height="300" aria-label="Gráfico comparativo de propiedades entre carbonos primario, secundario y terciario" role="img"></canvas>
                     </div>
-                    <div style="flex: 1; min-width: 300px;">
+                    <div class="modelo-info">
                         <h3>Propiedades Clave</h3>
                         <p>El carbono secundario influye en diversas propiedades moleculares:</p>
                         <ul>
@@ -456,69 +646,74 @@
                 </div>
                 
                 <table>
-                    <tr>
-                        <th>Propiedad</th>
-                        <th>Primario</th>
-                        <th>Secundario</th>
-                        <th>Terciario</th>
-                        <th>Explicación</th>
-                    </tr>
-                    <tr>
-                        <td>Reactividad en S<sub>N</sub>2</td>
-                        <td>Alta</td>
-                        <td>Moderada</td>
-                        <td>Muy baja</td>
-                        <td>Efecto estérico dificulta el ataque nucleofílico</td>
-                    </tr>
-                    <tr>
-                        <td>Estabilidad del carbocatión</td>
-                        <td>Baja</td>
-                        <td>Media</td>
-                        <td>Alta</td>
-                        <td>Efecto inductivo y hiperconjugación</td>
-                    </tr>
-                    <tr>
-                        <td>Punto de ebullición (en alcanos)</td>
-                        <td>Alto</td>
-                        <td>Medio</td>
-                        <td>Bajo</td>
-                        <td>Área superficial y fuerzas intermoleculares</td>
-                    </tr>
-                    <tr>
-                        <td>Acidez de H alfa</td>
-                        <td>Menos ácido</td>
-                        <td>Intermedio</td>
-                        <td>Más ácido</td>
-                        <td>Estabilización del anión por grupos alquilo</td>
-                    </tr>
+                    <caption>Comparación de propiedades entre diferentes tipos de carbono</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Propiedad</th>
+                            <th scope="col">Primario</th>
+                            <th scope="col">Secundario</th>
+                            <th scope="col">Terciario</th>
+                            <th scope="col">Explicación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Reactividad en S<sub>N</sub>2</td>
+                            <td>Alta</td>
+                            <td>Moderada</td>
+                            <td>Muy baja</td>
+                            <td>Efecto estérico dificulta el ataque nucleofílico</td>
+                        </tr>
+                        <tr>
+                            <td>Estabilidad del carbocatión</td>
+                            <td>Baja</td>
+                            <td>Media</td>
+                            <td>Alta</td>
+                            <td>Efecto inductivo y hiperconjugación</td>
+                        </tr>
+                        <tr>
+                            <td>Punto de ebullición (en alcanos)</td>
+                            <td>Alto</td>
+                            <td>Medio</td>
+                            <td>Bajo</td>
+                            <td>Área superficial y fuerzas intermoleculares</td>
+                        </tr>
+                        <tr>
+                            <td>Acidez de H alfa</td>
+                            <td>Menos ácido</td>
+                            <td>Intermedio</td>
+                            <td>Más ácido</td>
+                            <td>Estabilización del anión por grupos alquilo</td>
+                        </tr>
+                    </tbody>
                 </table>
                 
                 <div class="resumen">
                     <h3>Resumen de Propiedades</h3>
                     <p>Los carbonos secundarios presentan un balance único entre reactividad y estabilidad. Su comportamiento químico es más predecible que los terciarios pero más versátil que los primarios. En reacciones de eliminación (E2), los protones en carbonos secundarios son frecuentemente los más reactivos, mientras que en sustituciones nucleofílicas (S<sub>N</sub>1) forman carbocationes con estabilidad intermedia.</p>
                 </div>
-            </div>
+            </section>
 
             <!-- Sección Ejemplos -->
-            <div id="ejemplos" class="seccion">
-                <h2>Ejemplos en Moléculas Orgánicas</h2>
+            <section id="ejemplos" class="seccion" aria-labelledby="ejemplos-titulo">
+                <h2 id="ejemplos-titulo">Ejemplos en Moléculas Orgánicas</h2>
                 
                 <div class="ejemplos-container">
-                    <div class="ejemplo">
+                    <article class="ejemplo">
                         <h4>2-Propanol (Alcohol Isopropílico)</h4>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Propan-2-ol-3D-balls.png/1024px-Propan-2-ol-3D-balls.png" alt="2-Propanol">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Propan-2-ol-3D-balls.png/1024px-Propan-2-ol-3D-balls.png" alt="Estructura molecular del 2-Propanol" loading="lazy">
                         <p>El carbono central es secundario, unido a un grupo OH, un H y dos grupos CH<sub>3</sub>. Este alcohol secundario es ampliamente usado como desinfectante.</p>
-                    </div>
-                    <div class="ejemplo">
+                    </article>
+                    <article class="ejemplo">
                         <h4>Ciclohexano</h4>
-                        <img src="https://imgs.search.brave.com/FHMnVoCI1nnDZesF4BBv3hJS02f7INZ16_7mZWeFNbk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy8x/LzFmL1pZS0hFWEFO/X1p5a2xvaGV4YW5f/Um90YXRpb24uZ2lm.gif" alt="Ciclohexano">
+                        <img src="https://imgs.search.brave.com/FHMnVoCI1nnDZesF4BBv3hJS02f7INZ16_7mZWeFNbk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy8x/LzFmL1pZS0hFWEFO/X1p5a2xvaGV4YW5f/Um90YXRpb24uZ2lm.gif" alt="Estructura molecular del Ciclohexano" loading="lazy">
                         <p>Todos los carbonos en el ciclohexano son secundarios, mostrando la geometría ideal de 109.5° en la conformación de silla.</p>
-                    </div>
-                    <div class="ejemplo">
+                    </article>
+                    <article class="ejemplo">
                         <h4>2-Bromobutano</h4>
-                        <img src="https://imgs.search.brave.com/9CJKus7AxSLd_PBJ6jOKY4x7iHO0rHqA1SrU2yb9Fb0/rs:fit:860:0:0:0/g:ce/aHR0cDovL3NheWxv/cmRvdG9yZy5naXRo/dWIuaW8vdGV4dF90/aGUtYmFzaWNzLW9m/LWdlbmVyYWwtb3Jn/YW5pYy1hbmQtYmlv/bG9naWNhbC1jaGVt/aXN0cnkvc2VjdGlv/bl8xNi84NWU0Mzhj/MWEwYjhmOTVmOGZk/N2U4MDc5NjZmMDFh/ZC5qcGc" alt="2-Bromobutano">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/3-bromo-2-cloro-2-fluor-4-iodopentano.gif" alt="Estructura molecular del 2-Bromobutano" loading="lazy">
                         <p>El carbono 2 es secundario, unido a Br, H, CH<sub>3</sub> y CH<sub>2</sub>CH<sub>3</sub>. Compuesto clave en reacciones S<sub>N</sub>2.</p>
-                    </div>
+                    </article>
                 </div>
                 
                 <h3>Identificación en Moléculas Complejas</h3>
@@ -539,61 +734,66 @@
                     <h3>Importancia en Síntesis Orgánica</h3>
                     <p>Los carbonos secundarios son sitios clave en síntesis orgánica. Por ejemplo, en la oxidación de alcoholes secundarios se forman cetonas, mientras que en halogenaciones suelen dar mezclas de productos debido a la similar reactividad de los hidrógenos en posición secundaria. Su versatilidad los hace fundamentales en la construcción de moléculas complejas.</p>
                 </div>
-            </div>
+            </section>
 
             <!-- Sección Comparativa -->
-            <div id="comparativa" class="seccion">
-                <h2>Comparativa con Otros Tipos de Carbono</h2>
+            <section id="comparativa" class="seccion" aria-labelledby="comparativa-titulo">
+                <h2 id="comparativa-titulo">Comparativa con Otros Tipos de Carbono</h2>
                 
                 <div style="overflow-x: auto;">
                     <table>
-                        <tr>
-                            <th>Característica</th>
-                            <th>Primario (1°)</th>
-                            <th>Secundario (2°)</th>
-                            <th>Terciario (3°)</th>
-                            <th>Cuaternario (4°)</th>
-                        </tr>
-                        <tr>
-                            <td>N° de carbonos adyacentes</td>
-                            <td>1</td>
-                            <td>2</td>
-                            <td>3</td>
-                            <td>4</td>
-                        </tr>
-                        <tr>
-                            <td>Hidrógenos típicos</td>
-                            <td>3</td>
-                            <td>2</td>
-                            <td>1</td>
-                            <td>0</td>
-                        </tr>
-                        <tr>
-                            <td>Reactividad S<sub>N</sub>2</td>
-                            <td>Alta</td>
-                            <td>Moderada</td>
-                            <td>Muy baja</td>
-                            <td>Nula</td>
-                        </tr>
-                        <tr>
-                            <td>Estabilidad carbocatión</td>
-                            <td>Menos estable</td>
-                            <td>Intermedia</td>
-                            <td>Más estable</td>
-                            <td>No aplica</td>
-                        </tr>
-                        <tr>
-                            <td>Ejemplo típico</td>
-                            <td>CH<sub>3</sub>-R</td>
-                            <td>R-CH<sub>2</sub>-R</td>
-                            <td>R-CH-R<br>│<br>R</td>
-                            <td>R-C-R<br>│<br>R</td>
-                        </tr>
+                        <caption>Comparación detallada entre diferentes tipos de carbono</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Característica</th>
+                                <th scope="col">Primario (1°)</th>
+                                <th scope="col">Secundario (2°)</th>
+                                <th scope="col">Terciario (3°)</th>
+                                <th scope="col">Cuaternario (4°)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>N° de carbonos adyacentes</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>4</td>
+                            </tr>
+                            <tr>
+                                <td>Hidrógenos típicos</td>
+                                <td>3</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>Reactividad S<sub>N</sub>2</td>
+                                <td>Alta</td>
+                                <td>Moderada</td>
+                                <td>Muy baja</td>
+                                <td>Nula</td>
+                            </tr>
+                            <tr>
+                                <td>Estabilidad carbocatión</td>
+                                <td>Menos estable</td>
+                                <td>Intermedia</td>
+                                <td>Más estable</td>
+                                <td>No aplica</td>
+                            </tr>
+                            <tr>
+                                <td>Ejemplo típico</td>
+                                <td>CH<sub>3</sub>-R</td>
+                                <td>R-CH<sub>2</sub>-R</td>
+                                <td>R-CH-R<br>│<br>R</td>
+                                <td>R-C-R<br>│<br>R</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 30px; margin: 40px 0;">
-                    <div style="flex: 1; min-width: 300px;">
+                <div class="modelo-container">
+                    <div class="modelo-info">
                         <h3>Ventajas del Carbono Secundario</h3>
                         <ul>
                             <li>Balance ideal entre reactividad y estabilidad</li>
@@ -602,7 +802,7 @@
                             <li>Mayor accesibilidad para reactivos que terciarios</li>
                         </ul>
                     </div>
-                    <div style="flex: 1; min-width: 300px;">
+                    <div class="modelo-info">
                         <h3>Limitaciones</h3>
                         <ul>
                             <li>Puede dar mezclas de productos en reacciones</li>
@@ -616,36 +816,36 @@
                     <h3>Selección en Diseño Molecular</h3>
                     <p>En el diseño de fármacos y materiales, los carbonos secundarios ofrecen un equilibrio óptimo. Proporcionan suficiente estabilidad estructural sin sacrificar completamente la reactividad. Por ejemplo, en moléculas biológicamente activas, los carbonos secundarios son comunes en posiciones que requieren cierto grado de flexibilidad y accesibilidad para interacciones moleculares.</p>
                 </div>
-            </div>
+            </section>
 
             <!-- Sección Aplicaciones -->
-            <div id="aplicaciones" class="seccion">
-                <h2>Aplicaciones Industriales y Biológicas</h2>
+            <section id="aplicaciones" class="seccion" aria-labelledby="aplicaciones-titulo">
+                <h2 id="aplicaciones-titulo">Aplicaciones Industriales y Biológicas</h2>
                 
                 <h3>En la Industria Química</h3>
                 <div class="ejemplos-container">
-                    <div class="ejemplo">
+                    <article class="ejemplo">
                         <h4>Producción de Cetonas</h4>
-                        <i class="fas fa-industry" style="font-size: 50px; color: var(--secundario); text-align: center; display: block; margin: 15px 0;"></i>
+                        <i class="fas fa-industry" style="font-size: 50px; color: var(--secundario); text-align: center; display: block; margin: 15px 0;" aria-hidden="true"></i>
                         <p>La oxidación de alcoholes secundarios produce cetonas, compuestos clave en la fabricación de solventes, polímeros y fragancias.</p>
-                    </div>
-                    <div class="ejemplo">
+                    </article>
+                    <article class="ejemplo">
                         <h4>Combustibles</h4>
-                        <i class="fas fa-gas-pump" style="font-size: 50px; color: var(--secundario); text-align: center; display: block; margin: 15px 0;"></i>
+                        <i class="fas fa-gas-pump" style="font-size: 50px; color: var(--secundario); text-align: center; display: block; margin: 15px 0;" aria-hidden="true"></i>
                         <p>Los alcanos con carbonos secundarios (como el isooctano) son componentes importantes de combustibles por su balance entre energía y estabilidad.</p>
-                    </div>
-                    <div class="ejemplo">
+                    </article>
+                    <article class="ejemplo">
                         <h4>Plásticos</h4>
-                        <i class="fas fa-recycle" style="font-size: 50px; color: var(--secundario); text-align: center; display: block; margin: 15px 0;"></i>
+                        <i class="fas fa-recycle" style="font-size: 50px; color: var(--secundario); text-align: center; display: block; margin: 15px 0;" aria-hidden="true"></i>
                         <p>Muchos monómeros para plásticos contienen carbonos secundarios que permiten el control de las propiedades del polímero.</p>
-                    </div>
+                    </article>
                 </div>
                 
                 <h3>En Bioquímica</h3>
                 <div style="background: rgba(59, 130, 246, 0.05); padding: 20px; border-radius: 10px; margin: 20px 0;">
-                    <div style="display: flex; flex-wrap: wrap; gap: 30px; align-items: center;">
+                    <div class="modelo-container">
                         <div style="flex: 1; min-width: 200px;">
-                            <img src="https://imgs.search.brave.com/G40okvzRe1-t9L0Vf4CZ4dneXnavinMPk0SfvmDrofQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9iaW9i/b29rLmVzL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDIzLzEyL2Zl/MjhhMmVlMWVlYTlm/MGRjYjhmMWZkZjlh/ODA2N2Y4LmpwZw" alt="Colesterol" style="width: 100%; max-width: 200px; display: block; margin: 0 auto;">
+                            <img src="https://servicios.educarm.es/cnice/biosfera/datos/alumno/2bachillerato/biomol/imagenes/lipido/animacoles.gif" alt="Estructura molecular del Colesterol" loading="lazy" style="width: 100%; max-width: 200px; display: block; margin: 0 auto;">
                         </div>
                         <div style="flex: 2; min-width: 300px;">
                             <h4 style="margin-top: 0;">Colesterol y Esteroides</h4>
@@ -658,11 +858,19 @@
                     <h3>Perspectivas Futuras</h3>
                     <p>La investigación en catálisis asimétrica está explorando nuevas formas de aprovechar la reactividad de los carbonos secundarios para la síntesis de moléculas quirales con alta pureza óptica. Además, en ciencia de materiales, los compuestos con carbonos secundarios están siendo investigados para el desarrollo de nuevos polímeros con propiedades mecánicas mejoradas.</p>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
 
+    <button class="ir-arriba" aria-label="Ir al inicio de la página" onclick="irArriba()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <script>
+        // Variables globales para el modelo 3D
+        let scene, camera, renderer, controls, model3D;
+
+        // Mostrar sección seleccionada
         function mostrarSeccion(seccionId) {
             document.querySelectorAll('.seccion').forEach(sec => {
                 sec.classList.remove('activa');
@@ -674,12 +882,35 @@
                 behavior: 'smooth',
                 block: 'start'
             });
+
+            // Si la sección es la de estructura, inicializar el modelo 3D
+            if (seccionId === 'estructura' && !model3D) {
+                init3DModel();
+            }
         }
 
-        // Sistema de gráficos
-        document.addEventListener('DOMContentLoaded', function() {
+        // Función para ir arriba
+        function irArriba() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Mostrar/ocultar botón de ir arriba
+        window.addEventListener('scroll', function() {
+            const botonIrArriba = document.querySelector('.ir-arriba');
+            if (window.pageYOffset > 300) {
+                botonIrArriba.classList.add('mostrar');
+            } else {
+                botonIrArriba.classList.remove('mostrar');
+            }
+        });
+
+        // Inicializar gráfico de propiedades
+        function initGrafico() {
             const ctx = document.getElementById('graficoPropiedades').getContext('2d');
-            new Chart(ctx, {
+            return new Chart(ctx, {
                 type: 'radar',
                 data: {
                     labels: ['Reactividad S<sub>N</sub>2', 'Estabilidad carbocatión', 'Polaridad', 'Solubilidad', 'Estabilidad térmica', 'Acidez H alfa'],
@@ -689,29 +920,39 @@
                             data: [85, 30, 45, 70, 60, 40],
                             borderColor: '#2563eb',
                             backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                            pointBackgroundColor: '#2563eb'
+                            pointBackgroundColor: '#2563eb',
+                            borderWidth: 2
                         },
                         {
                             label: 'Secundario',
                             data: [65, 60, 50, 60, 70, 60],
                             borderColor: '#3b82f6',
                             backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                            pointBackgroundColor: '#3b82f6'
+                            pointBackgroundColor: '#3b82f6',
+                            borderWidth: 2
                         },
                         {
                             label: 'Terciario',
                             data: [20, 90, 55, 50, 80, 80],
                             borderColor: '#60a5fa',
                             backgroundColor: 'rgba(96, 165, 250, 0.2)',
-                            pointBackgroundColor: '#60a5fa'
+                            pointBackgroundColor: '#60a5fa',
+                            borderWidth: 2
                         }
                     ]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             position: 'top',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                padding: 20
+                            }
                         },
                         tooltip: {
                             callbacks: {
@@ -726,27 +967,251 @@
                             beginAtZero: true,
                             max: 100,
                             ticks: {
-                                stepSize: 20
+                                stepSize: 20,
+                                backdropColor: 'transparent'
+                            },
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 11
+                                }
                             }
                         }
                     },
                     elements: {
                         line: {
                             tension: 0.1
+                        },
+                        point: {
+                            radius: 4,
+                            hoverRadius: 6
                         }
                     }
                 }
             });
+        }
+        
+        // Inicializar modelo 3D
+        function init3DModel() {
+            const container = document.getElementById('modelo3d');
+            container.innerHTML = ''; // Limpiar placeholder
             
-            // Simulación de modelo 3D (placeholder)
-            const modelo3d = document.getElementById('modelo3d');
-            modelo3d.innerHTML = `
-                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-atom" style="font-size: 80px; color: var(--secundario); margin-bottom: 20px;"></i>
-                    <p style="text-align: center; margin: 0;">Modelo interactivo del carbono secundario<br><small>(En una implementación real se usaría una librería 3D como Three.js)</small></p>
-                </div>
-            `;
+            // 1. Crear la escena
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xe0f2fe);
+            
+            // 2. Configurar la cámara
+            camera = new THREE.PerspectiveCamera(
+                75, 
+                container.clientWidth / container.clientHeight, 
+                0.1, 
+                1000
+            );
+            camera.position.z = 5;
+            
+            // 3. Crear el renderizador
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: false
+            });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+            
+            // 4. Añadir controles de órbita
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.minDistance = 2;
+            controls.maxDistance = 10;
+            
+            // 5. Añadir iluminación
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight2.position.set(-1, -1, -1);
+            scene.add(directionalLight2);
+            
+            // 6. Crear la geometría del carbono secundario
+            function createAtom(color, position, size = 0.5) {
+                const geometry = new THREE.SphereGeometry(size, 32, 32);
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: color,
+                    shininess: 100,
+                    specular: 0x111111
+                });
+                const sphere = new THREE.Mesh(geometry, material);
+                sphere.position.set(...position);
+                return sphere;
+            }
+            
+            function createBond(start, end, color = 0x888888, thickness = 0.1) {
+                const direction = new THREE.Vector3().subVectors(end, start);
+                const length = direction.length();
+                const geometry = new THREE.CylinderGeometry(
+                    thickness, 
+                    thickness, 
+                    length, 
+                    16, 
+                    1, 
+                    false
+                );
+                geometry.rotateX(Math.PI / 2); // Rotar para alinear con el eje Z
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: color,
+                    shininess: 30
+                });
+                const cylinder = new THREE.Mesh(geometry, material);
+                
+                // Posicionar en el punto medio
+                const center = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+                cylinder.position.set(center.x, center.y, center.z);
+                
+                // Orientar hacia la dirección del enlace
+                cylinder.quaternion.setFromUnitVectors(
+                    new THREE.Vector3(0, 1, 0),
+                    new THREE.Vector3().subVectors(end, start).normalize()
+                );
+                return cylinder;
+            }
+            
+            // Átomo central (carbono secundario)
+            const centralCarbon = createAtom(0x3b82f6, [0, 0, 0], 0.6);
+            scene.add(centralCarbon);
+            
+            // Átomos unidos (2 carbonos y 2 hidrógenos)
+            const carbon1 = createAtom(0x2563eb, [1.54, 0, 0]);
+            const carbon2 = createAtom(0x2563eb, [-1.54, 0, 0]);
+            const hydrogen1 = createAtom(0xffffff, [0, 1.09, 0], 0.3);
+            const hydrogen2 = createAtom(0xffffff, [0, -1.09, 0], 0.3);
+            
+            scene.add(carbon1, carbon2, hydrogen1, hydrogen2);
+            
+            // Enlaces
+            scene.add(createBond(
+                centralCarbon.position, 
+                carbon1.position, 
+                0xaaaaaa,
+                0.15
+            ));
+            scene.add(createBond(
+                centralCarbon.position, 
+                carbon2.position, 
+                0xaaaaaa,
+                0.15
+            ));
+            scene.add(createBond(
+                centralCarbon.position, 
+                hydrogen1.position, 
+                0xcccccc,
+                0.08
+            ));
+            scene.add(createBond(
+                centralCarbon.position, 
+                hydrogen2.position, 
+                0xcccccc,
+                0.08
+            ));
+            
+            // Etiquetas
+            function addLabel(text, position, color = 0x000000) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 128;
+                const context = canvas.getContext('2d');
+                context.fillStyle = 'rgba(0, 0, 0, 0)';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.font = 'Bold 40px Arial';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillStyle = `rgb(${color >> 16}, ${(color >> 8) & 255}, ${color & 255})`;
+                context.fillText(text, canvas.width/2, canvas.height/2);
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                const material = new THREE.SpriteMaterial({ 
+                    map: texture,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                const sprite = new THREE.Sprite(material);
+                sprite.position.set(...position);
+                sprite.scale.set(0.5, 0.25, 1);
+                sprite.center.set(0.5, 0.5);
+                scene.add(sprite);
+                return sprite;
+            }
+            
+            addLabel('C', [0, 0, 0.8], 0x3b82f6);
+            addLabel('C', [1.54, 0, 0.8], 0x2563eb);
+            addLabel('C', [-1.54, 0, 0.8], 0x2563eb);
+            addLabel('H', [0, 1.09, 0.5], 0x666666);
+            addLabel('H', [0, -1.09, 0.5], 0x666666);
+            
+            // 7. Manejar el redimensionamiento
+            function onWindowResize() {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+            
+            window.addEventListener('resize', onWindowResize);
+            
+            // 8. Función de animación
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            model3D = true; // Marcar como inicializado
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar gráfico
+            initGrafico();
+            
+            // Configurar eventos para los botones de navegación
+            document.querySelectorAll('.navegacion button').forEach(button => {
+                button.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const seccionId = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                        mostrarSeccion(seccionId);
+                    }
+                });
+            });
+            
+            // Mostrar la primera sección por defecto
+            mostrarSeccion('definicion');
         });
+
+        // Cargar el modelo 3D cuando sea visible (Intersection Observer)
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !model3D) {
+                        init3DModel();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            observer.observe(document.getElementById('modelo3d'));
+        }
     </script>
 </body>
 </html>
