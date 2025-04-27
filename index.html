@@ -8,6 +8,23 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
     <style>
+        .web-link {
+    margin-top: 20px;       /* Espacio superior para separarlo de otros elementos */
+    padding: 15px;          /* Espacio interno para que el contenido no esté pegado a los bordes */
+    background-color: #e8f4f8; /* Color de fondo suave (azul claro) */
+    border-radius: 5px;     /* Bordes redondeados para un diseño moderno */
+    text-align: center;     /* Centra el texto y el enlace */
+}
+
+.web-link a {               /* Estilo específico para el enlace (<a>) dentro de .web-link */
+    color: #2980b9;         /* Color azul estándar para enlaces */
+    text-decoration: none;  /* Quita el subrayado predeterminado */
+    font-weight: bold;      /* Texto en negrita para mayor visibilidad */
+}
+
+.web-link a:hover {         /* Efecto al pasar el mouse sobre el enlace */
+    text-decoration: underline; /* Subraya el enlace al hacer hover */
+}
         :root {
             --primario: #2563eb;
             --secundario: #3b82f6;
@@ -507,6 +524,14 @@
             <button onclick="mostrarSeccion('aplicaciones')" aria-label="Mostrar sección de Aplicaciones">
                 <i class="fas fa-industry" aria-hidden="true"></i> Aplicaciones
             </button>
+            <div class="web-link">
+                <h3>Para más información, visita nuestro repositorio:</h3>
+                <p>
+                    <a href="https://github.com/zcrypt83/carbonos_secundarios?tab=readme-ov-file#carbono-secundario---aplicaci%C3%B3n-educativa-interactiva" target="_blank">
+                        https://github.com/zcrypt83/carbonos_secundarios
+                    </a>
+                </p>
+            </div>
         </nav>
 
         <main class="contenido-dinamico">
