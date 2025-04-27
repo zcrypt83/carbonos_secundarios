@@ -42,7 +42,6 @@ Aplicación web interactiva para el estudio de los carbonos secundarios en quím
 Esta aplicación web interactiva está diseñada para facilitar el aprendizaje sobre los carbonos secundarios en química orgánica mediante visualizaciones 3D, gráficos comparativos y contenido educativo estructurado.
 
 ## 🖥 Interfaz Principal
-[Visita de diagrama](https://www.google.com)
 
 
 La aplicación tiene dos áreas principales:
