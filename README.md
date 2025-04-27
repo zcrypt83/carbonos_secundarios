@@ -1,6 +1,6 @@
 # Carbono Secundario - Aplicación Educativa Interactiva
 
-![Captura de pantalla de la aplicación](https://ejemplo.com/ruta-a-imagen.jpg)
+
 
 ## 📚 Descripción
 
@@ -31,10 +31,7 @@ Aplicación web interactiva para el estudio de los carbonos secundarios en quím
 - Navegador moderno (Chrome, Firefox, Edge, Safari)
 - Conexión a Internet (para CDNs)
 
-### Instalación
-```bash
-git clone https://github.com/tu-usuario/carbono-secundario.git
-cd carbono-secundario
+
 
 
 
@@ -45,7 +42,8 @@ cd carbono-secundario
 Esta aplicación web interactiva está diseñada para facilitar el aprendizaje sobre los carbonos secundarios en química orgánica mediante visualizaciones 3D, gráficos comparativos y contenido educativo estructurado.
 
 ## 🖥 Interfaz Principal
-![Diagrama de interfaz](https://ejemplo.com/interfaz.jpg)
+[Visita de diagrama](https://www.google.com)
+
 
 La aplicación tiene dos áreas principales:
 1. **Panel de navegación izquierdo**: Menú con 6 secciones temáticas
@@ -68,7 +66,6 @@ La aplicación tiene dos áreas principales:
 ## 📊 Uso de Gráficos
 El gráfico radar compara propiedades entre carbonos:
 
-![Leyenda gráfico](https://ejemplo.com/leyenda-grafico.jpg)
 
 1. **Interpretación**:
    - Cada eje representa una propiedad diferente
@@ -99,4 +96,8 @@ El gráfico radar compara propiedades entre carbonos:
    ```javascript
    // En consola del navegador
    mostrarSeccion('aplicaciones'); // Salta a sección
-
+   
+### Instalación
+```bash
+git clone https://github.com/tu-usuario/carbono-secundario.git
+cd carbono-secundario
